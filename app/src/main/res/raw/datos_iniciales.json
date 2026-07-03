@@ -1,0 +1,26 @@
+{
+  "clientes": [
+    { "id_cliente": 1, "nombre": "Laura Martinez", "telefono": "600123456", "email": "laura@gmail.com", "password": "123" },
+    { "id_cliente": 2, "nombre": "Carlos Pérez", "telefono": "611987654", "email": "carlos@gmail.com", "password": "123" },
+    { "id_cliente": 3, "nombre": "Ana López", "telefono": "622345678", "email": "ana@gmail.com", "password": "123" }
+  ],
+  "empleados": [
+    { "id_empleado": 1, "nombre": "Vicky Gómez", "especialidad": "Corte y color", "telefono": "700111222" },
+    { "id_empleado": 3, "nombre": "Javier Ruiz", "especialidad": "Barbería", "telefono": "700333444" },
+    { "id_empleado": 5, "nombre": "Rafael Cabrera", "especialidad": "Peluquero", "telefono": "700100210" },
+    { "id_empleado": 6, "nombre": "Jenny Torres", "especialidad": "Manicura", "telefono": "928404034" }
+  ],
+  "servicios": [
+    { "id_servicio": 1, "nombre_servicio": "Corte de cabello", "precio": 12.50, "duracion_min": 30 },
+    { "id_servicio": 2, "nombre_servicio": "Coloración completa", "precio": 35.00, "duracion_min": 90 },
+    { "id_servicio": 3, "nombre_servicio": "Afeitado barba", "precio": 10.00, "duracion_min": 20 },
+    { "id_servicio": 4, "nombre_servicio": "Mechas balayage", "precio": 55.00, "duracion_min": 120 },
+    { "id_servicio": 5, "nombre_servicio": "Lavado y peinado", "precio": 15.00, "duracion_min": 25 },
+    { "id_servicio": 6, "nombre_servicio": "Tinte raiz", "precio": 28.00, "duracion_min": 60 },
+    { "id_servicio": 7, "nombre_servicio": "Depilación cejas", "precio": 8.00, "duracion_min": 10 },
+    { "id_servicio": 8, "nombre_servicio": "Manicura Básica", "precio": 12.00, "duracion_min": 20 },
+    { "id_servicio": 9, "nombre_servicio": "Manicura semipermanente", "precio": 20.00, "duracion_min": 40 },
+    { "id_servicio": 10, "nombre_servicio": "Tratamiento keratina", "precio": 75.00, "duracion_min": 150 },
+    { "id_servicio": 11, "nombre_servicio": "Corte nino/a", "precio": 8.00, "duracion_min": 15 }
+  ]
+}

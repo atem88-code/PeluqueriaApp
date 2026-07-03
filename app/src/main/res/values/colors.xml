@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="colorPrimary">#0058be</color>
+    <color name="colorPrimaryDark">#004395</color>
+    <color name="colorAccent">#aec6ff</color>
+    <color name="background_header">#f9f9ff</color>
+    
+    <!-- Vibrant Urban Grooming Palette -->
+    <color name="blue_button">#0058be</color>
+    <color name="purple_button">#991eba</color>
+    <color name="pink_button">#b50061</color>
+    <color name="dark_button">#1A1C2C</color>
+    <color name="error_red">#ba1a1a</color>
+    <color name="success_green">#28A745</color>
+    <color name="text_gray">#727786</color>
+    <color name="divider_gray">#c1c6d7</color>
+    <color name="favorite_red">#b50061</color>
+    <color name="light_purple_bg">#fcd7ff</color>
+    <color name="light_green_bg">#e8f5e9</color>
+
+    <!-- Missing Layout References -->
+    <color name="purple_header">#ebe8f9</color>
+    <color name="blue_primary">#0058be</color>
+    <color name="purple_primary">#991eba</color>
+    <color name="red_error">#ba1a1a</color>
+    <color name="gray_text">#727786</color>
+    <color name="green_success">#28A745</color>
+</resources>
