@@ -20,6 +20,7 @@ public abstract class AppDataBase extends RoomDatabase {
     public abstract CitaDao citaDao();
     public abstract FavoriteDao favoriteDao();
 
+
     private static volatile AppDataBase INSTANCE;
 
     public static AppDataBase getInstance(Context context) {
