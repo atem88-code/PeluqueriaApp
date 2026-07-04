@@ -174,4 +174,60 @@ public class VisualUITest {
             onView(withId(R.id.tvRegisterError)).check(matches(withText("¡Error! El formato del correo no es correcto.")));
         }
     }
+
+    @Test
+    public void visualTest_08_ErrorVacioLogin() throws InterruptedException {
+        try (ActivityScenario<loginActivity> scenario = ActivityScenario.launch(loginActivity.class)) {
+            // Click enter/login button directly (with empty fields)
+            onView(withId(R.id.btnLoginContinue)).perform(click());
+            Thread.sleep(1000);
+
+            // Verify error message for empty login
+            onView(withId(R.id.tvLoginError)).check(matches(isDisplayed()));
+            onView(withId(R.id.tvLoginError)).check(matches(withText("Campo vacío.")));
+        }
+    }
+
+    @Test
+    public void visualTest_09_Errordatosincorrectos() throws InterruptedException {
+        try (ActivityScenario<loginActivity> scenario = ActivityScenario.launch(loginActivity.class)) {
+            // Type email "laura" and wrong password "123" (since email must be laura@gmail.com)
+            onView(withId(R.id.etLoginEmail)).perform(typeText("laura"), closeSoftKeyboard());
+            onView(withId(R.id.etLoginPassword)).perform(typeText("123"), closeSoftKeyboard());
+            Thread.sleep(1000);
+
+            // Click continue
+            onView(withId(R.id.btnLoginContinue)).perform(click());
+            Thread.sleep(1000);
+
+            // Verify error message for incorrect data
+            onView(withId(R.id.tvLoginError)).check(matches(isDisplayed()));
+            onView(withId(R.id.tvLoginError)).check(matches(withText("¡Error! Campo vacío o usuario no existente.")));
+        }
+    }
+
+    @Test
+    public void visualTest_10_Usuariologeado() throws InterruptedException {
+        try (ActivityScenario<loginActivity> scenario = ActivityScenario.launch(loginActivity.class)) {
+            // Type valid user email and password
+            onView(withId(R.id.etLoginEmail)).perform(typeText("laura@gmail.com"), closeSoftKeyboard());
+            onView(withId(R.id.etLoginPassword)).perform(typeText("123"), closeSoftKeyboard());
+            Thread.sleep(1000);
+
+            // Click continue
+            onView(withId(R.id.btnLoginContinue)).perform(click());
+            Thread.sleep(1000);
+
+            // Verify logged in greeting matches "Hola, laura@gmail.com"
+            onView(withId(R.id.tvUserGreeting)).check(matches(isDisplayed()));
+            onView(withId(R.id.tvUserGreeting)).check(matches(withText("Hola, laura@gmail.com")));
+
+            // Click logout button (Cerrar sesión)
+            onView(withId(R.id.tvLogout)).perform(click());
+            Thread.sleep(1000);
+
+            // Verify back on login screen
+            onView(withId(R.id.btnLoginContinue)).check(matches(isDisplayed()));
+        }
+    }
 }
