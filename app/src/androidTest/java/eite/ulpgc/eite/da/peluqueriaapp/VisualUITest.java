@@ -9,6 +9,8 @@ import eite.ulpgc.eite.da.peluqueriaapp.login.loginActivity;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -87,6 +89,89 @@ public class VisualUITest {
             // 4. Verify they are in service details screen (tvDetailServiceName is visible and displays "Tinte raiz")
             onView(withId(R.id.tvDetailServiceName)).check(matches(isDisplayed()));
             onView(withId(R.id.tvDetailServiceName)).check(matches(withText("Tinte raiz")));
+        }
+    }
+
+    @Test
+    public void visualTest_04_ErrorVacio() throws InterruptedException {
+        try (ActivityScenario<loginActivity> scenario = ActivityScenario.launch(loginActivity.class)) {
+            // Go to Register screen
+            onView(withId(R.id.btnLoginRegister)).perform(click());
+            Thread.sleep(1000);
+
+            // Click continue button directly (with empty fields)
+            onView(withId(R.id.btnRegisterContinue)).perform(click());
+            Thread.sleep(1000);
+
+            // Verify error message for empty fields
+            onView(withId(R.id.tvRegisterError)).check(matches(isDisplayed()));
+            onView(withId(R.id.tvRegisterError)).check(matches(withText("¡Error! Campo vacío o usuario ya existente.")));
+        }
+    }
+
+    @Test
+    public void visualTest_05_ErrorUsuarioExistente() throws InterruptedException {
+        try (ActivityScenario<loginActivity> scenario = ActivityScenario.launch(loginActivity.class)) {
+            // Go to Register screen
+            onView(withId(R.id.btnLoginRegister)).perform(click());
+            Thread.sleep(1000);
+
+            // Type existing user email and password
+            onView(withId(R.id.etEmail)).perform(typeText("laura@gmail.com"), closeSoftKeyboard());
+            onView(withId(R.id.etPassword)).perform(typeText("1234"), closeSoftKeyboard());
+            Thread.sleep(1000);
+
+            // Click continue
+            onView(withId(R.id.btnRegisterContinue)).perform(click());
+            Thread.sleep(1000);
+
+            // Verify error message for existing user
+            onView(withId(R.id.tvRegisterError)).check(matches(isDisplayed()));
+            onView(withId(R.id.tvRegisterError)).check(matches(withText("¡Error! Campo vacío o usuario ya existente.")));
+        }
+    }
+
+    @Test
+    public void visualTest_06_ErrorLongitudContrasena() throws InterruptedException {
+        try (ActivityScenario<loginActivity> scenario = ActivityScenario.launch(loginActivity.class)) {
+            // Go to Register screen
+            onView(withId(R.id.btnLoginRegister)).perform(click());
+            Thread.sleep(1000);
+
+            // Type valid email but short password (3 characters)
+            onView(withId(R.id.etEmail)).perform(typeText("test06@gmail.com"), closeSoftKeyboard());
+            onView(withId(R.id.etPassword)).perform(typeText("123"), closeSoftKeyboard());
+            Thread.sleep(1000);
+
+            // Click continue
+            onView(withId(R.id.btnRegisterContinue)).perform(click());
+            Thread.sleep(1000);
+
+            // Verify error message for password length
+            onView(withId(R.id.tvRegisterError)).check(matches(isDisplayed()));
+            onView(withId(R.id.tvRegisterError)).check(matches(withText("¡Error! La contraseña debe tener al menos 4 caracteres.")));
+        }
+    }
+
+    @Test
+    public void visualTest_07_FormatoEmailError() throws InterruptedException {
+        try (ActivityScenario<loginActivity> scenario = ActivityScenario.launch(loginActivity.class)) {
+            // Go to Register screen
+            onView(withId(R.id.btnLoginRegister)).perform(click());
+            Thread.sleep(1000);
+
+            // Type invalid email (missing domain) and a valid password length
+            onView(withId(R.id.etEmail)).perform(typeText("test07"), closeSoftKeyboard());
+            onView(withId(R.id.etPassword)).perform(typeText("1234"), closeSoftKeyboard());
+            Thread.sleep(1000);
+
+            // Click continue
+            onView(withId(R.id.btnRegisterContinue)).perform(click());
+            Thread.sleep(1000);
+
+            // Verify error message for email format
+            onView(withId(R.id.tvRegisterError)).check(matches(isDisplayed()));
+            onView(withId(R.id.tvRegisterError)).check(matches(withText("¡Error! El formato del correo no es correcto.")));
         }
     }
 }
