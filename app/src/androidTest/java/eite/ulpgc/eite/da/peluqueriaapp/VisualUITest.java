@@ -3,10 +3,13 @@ package eite.ulpgc.eite.da.peluqueriaapp;
 import android.content.pm.ActivityInfo;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import eite.ulpgc.eite.da.peluqueriaapp.app.AppMediator;
 import eite.ulpgc.eite.da.peluqueriaapp.login.loginActivity;
 
+import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
@@ -15,9 +18,23 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.anything;
 
 @RunWith(AndroidJUnit4.class)
 public class VisualUITest {
+
+    @Before
+    public void setUp() {
+        // Reset mediator log-in state
+        AppMediator.getInstance().setLoggedUser(null);
+        
+        // Clear Shared Preferences to remove any persisted session
+        android.content.Context context = androidx.test.platform.app.InstrumentationRegistry.getInstrumentation().getTargetContext();
+        context.getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+                .edit()
+                .clear()
+                .commit();
+    }
 
     @Test
     public void visualTest_01_testScreenRotation() throws InterruptedException {
@@ -223,6 +240,53 @@ public class VisualUITest {
             onView(withId(R.id.tvUserGreeting)).check(matches(withText("Hola, laura@gmail.com")));
 
             // Click logout button (Cerrar sesión)
+            onView(withId(R.id.tvLogout)).perform(click());
+            Thread.sleep(1000);
+
+            // Verify back on login screen
+            onView(withId(R.id.btnLoginContinue)).check(matches(isDisplayed()));
+        }
+    }
+
+    @Test
+    public void visualTest_11_AccederypedirCita() throws InterruptedException {
+        try (ActivityScenario<loginActivity> scenario = ActivityScenario.launch(loginActivity.class)) {
+            // Type valid user email and password
+            onView(withId(R.id.etLoginEmail)).perform(typeText("laura@gmail.com"), closeSoftKeyboard());
+            onView(withId(R.id.etLoginPassword)).perform(typeText("123"), closeSoftKeyboard());
+            Thread.sleep(1000);
+
+            // Click continue
+            onView(withId(R.id.btnLoginContinue)).perform(click());
+            Thread.sleep(1000);
+
+            // Click Solicitar Cita button
+            onView(withId(R.id.btnNavSolicitarCita)).perform(click());
+            Thread.sleep(1000);
+
+            // Type date "04/07/26" and time "12:30"
+            onView(withId(R.id.etProjectDate)).perform(typeText("04/07/26"), closeSoftKeyboard());
+            onView(withId(R.id.etProjectTime)).perform(typeText("12:30"), closeSoftKeyboard());
+            Thread.sleep(1000);
+
+            // Click spinner to select first service "Corte de cabello"
+            onView(withId(R.id.spinnerServicio)).perform(click());
+            onData(anything()).atPosition(0).perform(click());
+            Thread.sleep(1000);
+
+            // Click submit to book appointment
+            onView(withId(R.id.btnSubmitProject)).perform(click());
+            Thread.sleep(1000);
+
+            // Verify on status details screen and click button to return to home
+            onView(withId(R.id.tvStatusTitle)).check(matches(isDisplayed()));
+            onView(withId(R.id.btnStatusAction)).perform(click());
+            Thread.sleep(1000);
+
+            // Verify back on home screen
+            onView(withId(R.id.tvUserGreeting)).check(matches(isDisplayed()));
+
+            // Click logout button (Cerrar sesión) to reset the state for subsequent tests
             onView(withId(R.id.tvLogout)).perform(click());
             Thread.sleep(1000);
 
