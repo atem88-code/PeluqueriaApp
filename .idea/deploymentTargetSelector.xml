@@ -30,6 +30,9 @@
       <SelectionState runConfigName="visualTest_16_pruebaencapsulamiento()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
+      <SelectionState runConfigName="visualTest_17_intentodeacceso()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
     </selectionStates>
   </component>
 </project>

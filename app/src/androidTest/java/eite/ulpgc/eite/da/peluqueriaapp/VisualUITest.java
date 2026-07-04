@@ -643,6 +643,28 @@ public class VisualUITest {
         }
     }
 
+    @Test
+    public void visualTest_17_intentodeacceso() throws InterruptedException {
+        try (ActivityScenario<loginActivity> scenario = ActivityScenario.launch(loginActivity.class)) {
+            Thread.sleep(1000);
+
+            // 1. Enter guest mode
+            onView(withId(R.id.btnLoginGuest)).perform(click());
+            Thread.sleep(1000);
+
+            // 2. Verify we are in guest mode (subHeader displays "Modo Invitado")
+            onView(withId(R.id.subHeader)).check(matches(withText("Modo Invitado")));
+
+            // 3. Attempt to verify that registered-only layouts and buttons are completely hidden
+            onView(withId(R.id.layoutLoggedIn)).check(matches(not(isDisplayed())));
+            onView(withId(R.id.btnNavSolicitarCita)).check(matches(not(isDisplayed())));
+            onView(withId(R.id.btnNavMostrarCita)).check(matches(not(isDisplayed())));
+            onView(withId(R.id.btnNavFavorito)).check(matches(not(isDisplayed())));
+
+            Thread.sleep(1000);
+        }
+    }
+
     public static org.hamcrest.Matcher<android.view.View> withDrawable(final int resourceId) {
         return new androidx.test.espresso.matcher.BoundedMatcher<android.view.View, android.widget.ImageView>(android.widget.ImageView.class) {
             @Override
