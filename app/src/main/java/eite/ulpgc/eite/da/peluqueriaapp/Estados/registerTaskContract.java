@@ -1,6 +1,7 @@
 package eite.ulpgc.eite.da.peluqueriaapp.Estados;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
 import eite.ulpgc.eite.da.peluqueriaapp.database.CitaEntity;
 import eite.ulpgc.eite.da.peluqueriaapp.database.ServicioEntity;
 
@@ -16,11 +17,11 @@ public interface registerTaskContract {
         void injectView(WeakReference<View> view);
         void injectModel(Model model);
         void onResume();
-        void onCancelClicked();
+        void onCancelClicked(int idCita);
     }
 
     interface Model {
-        CitaEntity getLatestCita(String email);
+        List<CitaEntity> getCitas(String email);
         ServicioEntity getServiceById(int id);
         void deleteCita(CitaEntity cita);
     }

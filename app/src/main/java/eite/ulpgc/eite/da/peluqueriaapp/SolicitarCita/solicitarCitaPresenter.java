@@ -73,6 +73,14 @@ public class solicitarCitaPresenter implements solicitarCitaContract.Presenter {
             return;
         }
 
+        if (model.getAppointmentsCount(user.email) >= 5) {
+            state.errorMessage = "Ya tienes el máximo de 5 citas reservadas.";
+            if (view.get() != null) {
+                view.get().showAppointmentError(state.errorMessage);
+            }
+            return;
+        }
+
         ServicioEntity selectedService = state.services.get(selectedServiceIndex);
         boolean success = model.createAppointment(user.email, date, time, selectedService.id_servicio);
         if (success) {

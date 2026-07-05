@@ -31,29 +31,32 @@ public class registerTaskPresenter implements registerTaskContract.Presenter {
         AppMediator mediator = AppMediator.getInstance();
         UserEntity user = mediator.getLoggedUser();
         
+        java.util.List<registerTaskViewModel.AppointmentItem> items = new java.util.ArrayList<>();
+        
         if (user != null) {
-            CitaEntity latest = model.getLatestCita(user.email);
-            state.cita = latest;
-            if (latest != null) {
-                state.dateTime = latest.fecha + " a las " + latest.hora;
-                ServicioEntity s = model.getServiceById(latest.id_servicio);
-                state.service = s;
-                if (s != null) {
-                    state.serviceName = s.nombre_servicio;
-                } else {
-                    state.serviceName = "Ninguno";
+            java.util.List<CitaEntity> list = model.getCitas(user.email);
+            state.citas = list;
+            
+            if (list != null && !list.isEmpty()) {
+                for (CitaEntity cita : list) {
+                    registerTaskViewModel.AppointmentItem item = new registerTaskViewModel.AppointmentItem();
+                    item.idCita = cita.id_cita;
+                    item.dateTime = cita.fecha + " a las " + cita.hora;
+                    
+                    ServicioEntity s = model.getServiceById(cita.id_servicio);
+                    if (s != null) {
+                        item.serviceName = s.nombre_servicio;
+                    } else {
+                        item.serviceName = "Ninguno";
+                    }
+                    items.add(item);
                 }
-                state.hasAppointment = true;
-            } else {
-                state.dateTime = "No tienes citas reservadas";
-                state.serviceName = "-";
-                state.hasAppointment = false;
             }
         } else {
-            state.dateTime = "No tienes citas reservadas";
-            state.serviceName = "-";
-            state.hasAppointment = false;
+            state.citas = null;
         }
+        
+        state.appointments = items;
 
         if (view.get() != null) {
             view.get().displayAppointment(state);
@@ -61,18 +64,17 @@ public class registerTaskPresenter implements registerTaskContract.Presenter {
     }
 
     @Override
-    public void onCancelClicked() {
-        if (state.cita != null) {
-            model.deleteCita(state.cita);
-            state.cita = null;
-            state.service = null;
-            state.dateTime = "No tienes citas reservadas";
-            state.serviceName = "-";
-            state.hasAppointment = false;
-
+    public void onCancelClicked(int idCita) {
+        if (state.citas != null) {
+            for (CitaEntity cita : state.citas) {
+                if (cita.id_cita == idCita) {
+                    model.deleteCita(cita);
+                    break;
+                }
+            }
+            onResume();
             if (view.get() != null) {
                 view.get().showCancellationSuccess();
-                view.get().displayAppointment(state);
             }
         }
     }

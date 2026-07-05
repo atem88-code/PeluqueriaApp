@@ -24,13 +24,16 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="Tests in 'eite.ulpgc.eite.da.peluqueriaapp'">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="visualTest_16_pruebaencapsulamiento()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="visualTest_17_intentodeacceso()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="visualTest_18_errorcitadatos()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="visualTest_19_errorlimitecitas()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

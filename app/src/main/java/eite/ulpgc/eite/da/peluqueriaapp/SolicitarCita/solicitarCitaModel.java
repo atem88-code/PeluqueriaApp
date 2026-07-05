@@ -36,5 +36,11 @@ public class solicitarCitaModel implements solicitarCitaContract.Model {
 
         AppDataBase.getInstance(context).citaDao().insert(appointment);
         return true;
+     }
+
+    @Override
+    public int getAppointmentsCount(String email) {
+        List<CitaEntity> list = AppDataBase.getInstance(context).citaDao().getByEmail(email);
+        return list != null ? list.size() : 0;
     }
 }

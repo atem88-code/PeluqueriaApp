@@ -22,6 +22,7 @@ public class statusActivity extends AppCompatActivity implements statusContract.
     private TextView tvStatusServicio;
     private TextView tvStatusMessage;
     private Button btnStatusAction;
+    private Button btnViewAppointment;
 
     private boolean showDetail = false;
 
@@ -38,6 +39,7 @@ public class statusActivity extends AppCompatActivity implements statusContract.
         tvStatusServicio = findViewById(R.id.tvStatusServicio);
         tvStatusMessage = findViewById(R.id.tvStatusMessage);
         btnStatusAction = findViewById(R.id.btnStatusAction);
+        btnViewAppointment = findViewById(R.id.btnViewAppointment);
 
         statusScreen.configure(this);
 
@@ -55,6 +57,13 @@ public class statusActivity extends AppCompatActivity implements statusContract.
             @Override
             public void onClick(View v) {
                 presenter.onActionClicked();
+            }
+        });
+
+        btnViewAppointment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presenter.onViewAppointmentClicked();
             }
         });
     }
@@ -83,11 +92,13 @@ public class statusActivity extends AppCompatActivity implements statusContract.
                 tvStatusHora.setText(viewModel.time);
                 tvStatusServicio.setText(viewModel.serviceName);
                 btnStatusAction.setText("Volver al inicio");
+                btnViewAppointment.setVisibility(View.VISIBLE);
             } else {
                 cvStatusDetail.setVisibility(View.GONE);
                 tvStatusMessage.setVisibility(View.VISIBLE);
                 tvStatusMessage.setText(viewModel.message);
                 btnStatusAction.setText("Iniciar Sesión");
+                btnViewAppointment.setVisibility(View.GONE);
             }
         }
     }
@@ -99,6 +110,12 @@ public class statusActivity extends AppCompatActivity implements statusContract.
         } else {
             AppMediator.getInstance().goToLogin(this);
         }
+        finish();
+    }
+
+    @Override
+    public void navigateToMyAppointments() {
+        AppMediator.getInstance().goToRegisterTask(this);
         finish();
     }
 }

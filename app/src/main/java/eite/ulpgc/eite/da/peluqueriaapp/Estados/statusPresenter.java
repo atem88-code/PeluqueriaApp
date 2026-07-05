@@ -40,4 +40,11 @@ public class statusPresenter implements statusContract.Presenter {
             view.get().navigateToHomeOrLogin();
         }
     }
+
+    @Override
+    public void onViewAppointmentClicked() {
+        if (view.get() != null) {
+            view.get().navigateToMyAppointments();
+        }
+    }
 }

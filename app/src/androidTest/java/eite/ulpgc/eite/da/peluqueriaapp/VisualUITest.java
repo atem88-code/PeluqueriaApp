@@ -27,8 +27,10 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
@@ -411,8 +413,8 @@ public class VisualUITest {
 
             // 7. Verify appointment card is now hidden and no appointments are shown
             onView(withId(R.id.tvCitaReservadaTitle)).check(matches(withText("No tienes citas reservadas")));
-            onView(withId(R.id.cvCitaCard)).check(matches(not(isDisplayed())));
-            onView(withId(R.id.btnCancelCita)).check(matches(not(isDisplayed())));
+            onView(withId(R.id.cvCitaCard)).check(doesNotExist());
+            onView(withId(R.id.btnCancelCita)).check(doesNotExist());
 
             Thread.sleep(1000);
         }
@@ -608,7 +610,7 @@ public class VisualUITest {
             onView(withId(R.id.btnNavMostrarCita)).perform(click());
             Thread.sleep(1000);
             onView(withId(R.id.tvCitaReservadaTitle)).check(matches(withText("No tienes citas reservadas")));
-            onView(withId(R.id.cvCitaCard)).check(matches(not(isDisplayed())));
+            onView(withId(R.id.cvCitaCard)).check(doesNotExist());
             onView(withId(R.id.btnHeaderBack)).perform(click());
             Thread.sleep(1000);
 
@@ -689,6 +691,121 @@ public class VisualUITest {
                 return actual != null && actual.equals(expectedState);
             }
         };
+    }
+
+    @Test
+    public void visualTest_18_errorcitadatos() throws InterruptedException {
+        try (ActivityScenario<loginActivity> scenario = ActivityScenario.launch(loginActivity.class)) {
+            Thread.sleep(1000);
+
+            // Log in as Laura
+            onView(withId(R.id.etLoginEmail)).perform(typeText("laura@gmail.com"), closeSoftKeyboard());
+            onView(withId(R.id.etLoginPassword)).perform(typeText("123"), closeSoftKeyboard());
+            Thread.sleep(1000);
+            onView(withId(R.id.btnLoginContinue)).perform(click());
+            Thread.sleep(1000);
+
+            // Click Solicitar Cita button
+            onView(withId(R.id.btnNavSolicitarCita)).perform(click());
+            Thread.sleep(1000);
+
+            // Type date "06/07/26" and empty time
+            onView(withId(R.id.etProjectDate)).perform(typeText("06/07/26"), closeSoftKeyboard());
+            onView(withId(R.id.etProjectTime)).perform(typeText(""), closeSoftKeyboard());
+            Thread.sleep(1000);
+
+            // Click submit to book appointment
+            onView(withId(R.id.btnSubmitProject)).perform(click());
+            Thread.sleep(1000);
+
+            // Verify error message is displayed
+            onView(withId(R.id.tvCitaError)).check(matches(isDisplayed()));
+            onView(withId(R.id.tvCitaError)).check(matches(withText("Por favor rellene todos los campos.")));
+
+            // Clear date, and type time "15:00" and empty date
+            onView(withId(R.id.etProjectDate)).perform(clearText(), closeSoftKeyboard());
+            onView(withId(R.id.etProjectTime)).perform(typeText("15:00"), closeSoftKeyboard());
+            Thread.sleep(1000);
+
+            // Click submit to book appointment
+            onView(withId(R.id.btnSubmitProject)).perform(click());
+            Thread.sleep(1000);
+
+            // Verify error message is displayed
+            onView(withId(R.id.tvCitaError)).check(matches(isDisplayed()));
+            onView(withId(R.id.tvCitaError)).check(matches(withText("Por favor rellene todos los campos.")));
+
+            Thread.sleep(1000);
+        }
+    }
+
+    @Test
+    public void visualTest_19_errorlimitecitas() throws InterruptedException {
+        Context context = androidx.test.platform.app.InstrumentationRegistry.getInstrumentation().getTargetContext();
+        AppDataBase db = AppDataBase.getInstance(context);
+
+        // Ensure Laura's appointments are cleared before starting the test
+        List<CitaEntity> existing = db.citaDao().getByEmail("laura@gmail.com");
+        for (CitaEntity c : existing) {
+            db.citaDao().delete(c);
+        }
+
+        try (ActivityScenario<loginActivity> scenario = ActivityScenario.launch(loginActivity.class)) {
+            Thread.sleep(1000);
+
+            // Log in as Laura
+            onView(withId(R.id.etLoginEmail)).perform(typeText("laura@gmail.com"), closeSoftKeyboard());
+            onView(withId(R.id.etLoginPassword)).perform(typeText("123"), closeSoftKeyboard());
+            Thread.sleep(1000);
+            onView(withId(R.id.btnLoginContinue)).perform(click());
+            Thread.sleep(1000);
+
+            // Book 5 appointments sequentially
+            for (int i = 0; i < 5; i++) {
+                onView(withId(R.id.btnNavSolicitarCita)).perform(click());
+                Thread.sleep(1000);
+
+                onView(withId(R.id.etProjectDate)).perform(typeText("06/07/26"), closeSoftKeyboard());
+                onView(withId(R.id.etProjectTime)).perform(typeText("15:00"), closeSoftKeyboard());
+                Thread.sleep(1000);
+
+                // Select a service based on index
+                onView(withId(R.id.spinnerServicio)).perform(click());
+                Thread.sleep(1000);
+                onData(anything()).atPosition(i).perform(click());
+                Thread.sleep(1000);
+
+                onView(withId(R.id.btnSubmitProject)).perform(click());
+                Thread.sleep(1000);
+
+                // Verify we are on status screen and click Volver al inicio
+                onView(withId(R.id.tvStatusTitle)).check(matches(isDisplayed()));
+                onView(withId(R.id.btnStatusAction)).perform(click());
+                Thread.sleep(1000);
+            }
+
+            // Attempt to book 6th appointment
+            onView(withId(R.id.btnNavSolicitarCita)).perform(click());
+            Thread.sleep(1000);
+
+            onView(withId(R.id.etProjectDate)).perform(typeText("06/07/26"), closeSoftKeyboard());
+            onView(withId(R.id.etProjectTime)).perform(typeText("15:00"), closeSoftKeyboard());
+            Thread.sleep(1000);
+
+            onView(withId(R.id.spinnerServicio)).perform(click());
+            Thread.sleep(1000);
+            onData(anything()).atPosition(0).perform(click());
+            Thread.sleep(1000);
+
+            onView(withId(R.id.btnSubmitProject)).perform(click());
+            Thread.sleep(1000);
+
+            // Verify error message for exceeding limit
+            onView(withId(R.id.tvCitaError)).check(matches(isDisplayed()));
+            onView(withId(R.id.tvCitaError)).check(matches(withText("Ya tienes el máximo de 5 citas reservadas.")));
+
+            Thread.sleep(1000);
+        }
     }
 
     @After

@@ -13,11 +13,8 @@ public class registerTaskActivity extends AppCompatActivity implements registerT
 
     private registerTaskContract.Presenter presenter;
 
-    private TextView tvMiCitaFechaHora;
-    private TextView tvMiCitaServicio;
     private TextView tvCitaReservadaTitle;
-    private View cvCitaCard;
-    private Button btnCancelCita;
+    private android.widget.LinearLayout llCitasContainer;
     private ImageView btnHeaderBack;
 
     @Override
@@ -25,21 +22,11 @@ public class registerTaskActivity extends AppCompatActivity implements registerT
         super.onCreate(savedInstanceState);
         setContentView(R.layout.citareservada);
 
-        tvMiCitaFechaHora = findViewById(R.id.tvMiCitaFechaHora);
-        tvMiCitaServicio = findViewById(R.id.tvMiCitaServicio);
         tvCitaReservadaTitle = findViewById(R.id.tvCitaReservadaTitle);
-        cvCitaCard = findViewById(R.id.cvCitaCard);
-        btnCancelCita = findViewById(R.id.btnCancelCita);
+        llCitasContainer = findViewById(R.id.llCitasContainer);
         btnHeaderBack = findViewById(R.id.btnHeaderBack);
 
         registerTaskScreen.configure(this);
-
-        btnCancelCita.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                presenter.onCancelClicked();
-            }
-        });
 
         if (btnHeaderBack != null) {
             btnHeaderBack.setOnClickListener(new View.OnClickListener() {
@@ -64,19 +51,30 @@ public class registerTaskActivity extends AppCompatActivity implements registerT
 
     @Override
     public void displayAppointment(registerTaskViewModel viewModel) {
-        if (viewModel != null) {
-            tvMiCitaFechaHora.setText(viewModel.dateTime);
-            tvMiCitaServicio.setText(viewModel.serviceName);
+        llCitasContainer.removeAllViews();
+        if (viewModel != null && viewModel.appointments != null && !viewModel.appointments.isEmpty()) {
+            tvCitaReservadaTitle.setText("Mis Citas Reservadas");
+            for (final registerTaskViewModel.AppointmentItem item : viewModel.appointments) {
+                View itemView = getLayoutInflater().inflate(R.layout.item_cita, llCitasContainer, false);
 
-            if (viewModel.hasAppointment) {
-                cvCitaCard.setVisibility(View.VISIBLE);
-                btnCancelCita.setVisibility(View.VISIBLE);
-                tvCitaReservadaTitle.setText("Cita Reservada");
-            } else {
-                cvCitaCard.setVisibility(View.GONE);
-                btnCancelCita.setVisibility(View.GONE);
-                tvCitaReservadaTitle.setText("No tienes citas reservadas");
+                TextView tvMiCitaFechaHora = itemView.findViewById(R.id.tvMiCitaFechaHora);
+                TextView tvMiCitaServicio = itemView.findViewById(R.id.tvMiCitaServicio);
+                Button btnCancelCita = itemView.findViewById(R.id.btnCancelCita);
+
+                tvMiCitaFechaHora.setText(item.dateTime);
+                tvMiCitaServicio.setText(item.serviceName);
+
+                btnCancelCita.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        presenter.onCancelClicked(item.idCita);
+                    }
+                });
+
+                llCitasContainer.addView(itemView);
             }
+        } else {
+            tvCitaReservadaTitle.setText("No tienes citas reservadas");
         }
     }
 

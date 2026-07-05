@@ -8,11 +8,13 @@ public interface statusContract {
         void injectPresenter(Presenter presenter);
         void displayData(statusViewModel viewModel);
         void navigateToHomeOrLogin();
+        void navigateToMyAppointments();
     }
 
     interface Presenter {
         void injectView(WeakReference<View> view);
         void onResume();
         void onActionClicked();
+        void onViewAppointmentClicked();
     }
 }

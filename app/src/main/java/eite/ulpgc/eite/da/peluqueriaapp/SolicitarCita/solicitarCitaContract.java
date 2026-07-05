@@ -23,5 +23,6 @@ public interface solicitarCitaContract {
     interface Model {
         List<ServicioEntity> getServices();
         boolean createAppointment(String email, String date, String time, int serviceId);
+        int getAppointmentsCount(String email);
     }
 }

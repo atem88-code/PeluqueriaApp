@@ -15,12 +15,8 @@ public class registerTaskModel implements registerTaskContract.Model {
     }
 
     @Override
-    public CitaEntity getLatestCita(String email) {
-        List<CitaEntity> list = AppDataBase.getInstance(context).citaDao().getByEmail(email);
-        if (list != null && !list.isEmpty()) {
-            return list.get(list.size() - 1);
-        }
-        return null;
+    public List<CitaEntity> getCitas(String email) {
+        return AppDataBase.getInstance(context).citaDao().getByEmail(email);
     }
 
     @Override
